@@ -1,0 +1,139 @@
+展開／摺疊結構award // done
+展開／摺疊結構courseinfo // might be done
+展開／摺疊結構educationalbackground // done
+展開／摺疊結構experience // done
+展開／摺疊結構paper // might be done
+展開／摺疊結構patent // done
+展開／摺疊結構project // done
+展開／摺疊結構speech // done
+展開／摺疊結構teachers // done
+展開／摺疊結構teachingmaterials // done
+展開／摺疊結構users //whatever
+
+
+經歷://done
+
+CREATE TABLE Experience (
+    Experience_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Prof_ID VARCHAR(50) NOT NULL,
+    Experience_type VARCHAR(100) NOT NULL,
+    Experience_position VARCHAR(100) NOT NULL,
+    FOREIGN KEY (Prof_ID) REFERENCES teachers(Prof_ID)
+)
+
+指導學生獲獎://done
+
+CREATE TABLE Award (
+    Award_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Prof_ID VARCHAR(50) NOT NULL,
+    Award_Advisee VARCHAR(100) NOT NULL,
+    Award_ProjectName VARCHAR(200) NOT NULL,
+    Award_CompName_Position VARCHAR(200) NOT NULL,
+    Award_Date DATE NOT NULL,
+    Award_organizer VARCHAR(200) NOT NULL,
+    FOREIGN KEY (Prof_ID) REFERENCES teachers(Prof_ID)
+)
+
+計畫://done
+CREATE TABLE Project (
+    Project_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Prof_ID VARCHAR(50) NOT NULL,
+    Project_Name VARCHAR(200) NOT NULL,
+    Project_Duration VARCHAR(100) NOT NULL,
+    Project_Type ENUM('國科會', '產學合作') NOT NULL,
+    Project_TakenPosition VARCHAR(100) NOT NULL,
+    FOREIGN KEY (Prof_ID) REFERENCES teachers(Prof_ID)
+)
+
+學歷://done
+CREATE TABLE EducationalBackground (
+    EduBG_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Prof_ID VARCHAR(50) NOT NULL,
+    EduBG_University VARCHAR(100) NOT NULL,
+    EduBG_Department VARCHAR(100) NOT NULL,
+    EduBG_Degree VARCHAR(50) NOT NULL,
+    FOREIGN KEY (Prof_ID) REFERENCES teachers(Prof_ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+演講:
+CREATE TABLE Speech (
+    Speech_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Prof_ID VARCHAR(50) NOT NULL,
+    Speech_Name VARCHAR(200) NOT NULL,
+    Speech_Audience VARCHAR(200) NOT NULL,
+    Speech_Date DATE NOT NULL,
+    FOREIGN KEY (Prof_ID) REFERENCES teachers(Prof_ID)
+)
+
+專利:
+CREATE TABLE Patent (
+    Patent_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Prof_ID VARCHAR(50) NOT NULL,
+    Patent_Type VARCHAR(10) NOT NULL,
+    Patent_Name VARCHAR(100) NOT NULL,
+    Patent_Term VARCHAR(20) NOT NULL,
+    FOREIGN KEY (Prof_ID) REFERENCES teachers(Prof_ID)
+)
+
+teachmat
+CREATE teachingmaterials Speech (
+    TeachMat_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Prof_ID VARCHAR(50) NOT NULL,
+    TeachMat_Author VARCHAR(100) NOT NULL,
+    TeachMat_Name VARCHAR(200) NOT NULL,
+    TeachMat_Publisher VARCHAR(200) NOT NULL,
+    FOREIGN KEY (Prof_ID) REFERENCES teachers(Prof_ID)
+)
+
+
+taech
+CREATE TABLE teachers (
+    Prof_ID VARCHAR(50) NOT NULL PRIMARY KEY,
+    Prof_Name VARCHAR(15) NOT NULL,
+    Prof_title VARCHAR(20) NOT NULL,
+    Prof_EmailAddress VARCHAR(25) NOT NULL,
+    Prof_ExtensionNumber VARCHAR(25) NOT NULL,
+    Prof_ResearchFields VARCHAR(50),
+    Prof_Image VARCHAR(100)
+);
+
+
+
+CREATE TABLE Paper (
+    Paper_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Prof_ID VARCHAR(50) NOT NULL,
+    Paper_Author VARCHAR(200) NOT NULL,
+    Paper_Title VARCHAR(200) NOT NULL,
+    Paper_Category VARCHAR(10) NOT NULL,
+
+
+    Paper_JournalName VARCHAR(200) NOT NULL,
+    
+    Paper_ConferenceName VARCHAR(200) NOT NULL,
+
+    Paper_BookTitle VARCHAR(200) NOT NULL,
+    Paper_BookType VARCHAR(200) NOT NULL,
+
+    Paper_Publisher VARCHAR(200) NOT NULL,
+    Paper_ConferenceLocation VARCHAR(200) NOT NULL,
+    Paper_PublishDate VARCHAR(50) NOT NULL,
+    
+    Paper_Indexing VARCHAR(200)
+
+    FOREIGN KEY (Prof_ID) REFERENCES teachers(Prof_ID)
+)
+
+class
+
+no prof?
+CREATE TABLE CourseInfo (
+    Course_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Course_Name VARCHAR(200) NOT NULL,
+    Course_Credit INT(10) NOT NULL,
+    Course_Req VARCHAR(10) NOT NULL,
+
+    Course_Class VARCHAR(50),
+    Course_Teachers VARCHAR(200),
+    Course_Period VARCHAR(200) NOT NULL,
+    Course_Location VARCHAR(50) NOT NULL
+)
