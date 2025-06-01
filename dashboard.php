@@ -499,75 +499,153 @@ include('db.php');
             document.getElementById('editCourseSection').style.display = (v==='edit') ? 'block' : 'none';
             document.getElementById('deleteCourseSection').style.display = (v==='delete') ? 'block' : 'none';
         }
-        // 課表資料結構
-        let courseSchedule = Array.from({length:14},()=>Array.from({length:5},()=>({Course_Name:'',Course_Teachers:'',Course_Credit:'',Course_Req:'必修',Course_Class:'',Course_Location:''})));
-        function renderCourseTable() {
-            document.querySelectorAll('#courseTable td.course-editable').forEach(td => {
-                const row = td.dataset.row-1, col = td.dataset.col-1;
-                td.textContent = courseSchedule[row][col].Course_Name || '';
-            });
-        }
-        if (document.getElementById('courseTable')) {
-            document.querySelectorAll('#courseTable td.course-editable').forEach(td => {
-                td.onclick = function() {
-                    const row = this.dataset.row-1, col = this.dataset.col-1;
-                    const panel = document.getElementById('courseFormPanel');
-                    panel.style.display = 'block';
-                    panel.innerHTML = `
-                        <h3>課程資訊（${row+1} 節 ${['Mon','Tue','Wed','Thu','Fri'][col]}）</h3>
-                        <form id="courseEditForm">
-                            <label>課程名稱：<input type="text" name="Course_Name" value="${courseSchedule[row][col].Course_Name||''}" required></label><br>
-                            <label>學分數：<input type="number" name="Course_Credit" value="${courseSchedule[row][col].Course_Credit||''}" min="0"></label><br>
-                            <label>必/選修：<select name="Course_Req"><option value="必修">必修</option><option value="選修">選修</option></select></label><br>
-                            <label>授課班級：<input type="text" name="Course_Class" value="${courseSchedule[row][col].Course_Class||''}"></label><br>
-                            <label>講師（可多位，以空格分隔）：<input type="text" name="Course_Teachers" value="${courseSchedule[row][col].Course_Teachers||''}"></label><br>
-                            <label>上課地點：<input type="text" name="Course_Location" value="${courseSchedule[row][col].Course_Location||''}"></label><br>
-                            <div style="margin-top:10px;"><button type="submit">儲存</button> <button type="button" id="cancelEditBtn">取消</button></div>
-                        </form>
-                    `;
-                    panel.querySelector('select[name="Course_Req"]').value = courseSchedule[row][col].Course_Req;
-                    panel.querySelector('#courseEditForm').onsubmit = function(e) {
-                        e.preventDefault();
-                        courseSchedule[row][col] = {
-                            Course_Name: this.Course_Name.value,
-                            Course_Credit: this.Course_Credit.value,
-                            Course_Req: this.Course_Req.value,
-                            Course_Class: this.Course_Class.value,
-                            Course_Teachers: this.Course_Teachers.value,
-                            Course_Location: this.Course_Location.value
-                        };
-                        renderCourseTable();
-                        panel.style.display = 'none';
-                    };
-                    panel.querySelector('#cancelEditBtn').onclick = function() {
-                        panel.style.display = 'none';
-                    };
+        // 查詢功能AJAX
+        document.addEventListener('DOMContentLoaded', function() {
+            // 教師查詢
+            var searchForm = document.getElementById('searchForm');
+            if (searchForm) {
+                searchForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    var formData = new FormData(searchForm);
+                    fetch('info_search.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(r => r.text())
+                    .then(txt => {
+                        document.getElementById('searchResult').innerHTML = txt;
+                    });
                 };
-            });
-            document.getElementById('saveCourseBtn').onclick = function() {
-                // 將 row/col 轉為 Course_Period，並確保欄位順序正確
-                let scheduleWithPeriod = courseSchedule.map((rowArr, i) => rowArr.map((colObj, j) => {
-                    return {
-                        Course_Name: colObj.Course_Name,
-                        Course_Credit: colObj.Course_Credit,
-                        Course_Req: colObj.Course_Req,
-                        Course_Class: colObj.Course_Class,
-                        Course_Teachers: colObj.Course_Teachers,
-                        Course_Period: (i+1)+'-'+(j+1),
-                        Course_Location: colObj.Course_Location
-                    };
-                }));
-                fetch('course_add.php', {
-                    method: 'POST',
-                    headers: {'Content-Type':'application/x-www-form-urlencoded'},
-                    body: 'schedule='+encodeURIComponent(JSON.stringify(scheduleWithPeriod))
-                }).then(r=>r.text()).then(txt=>{
-                    alert('課表已儲存！');
-                    location.reload();
-                });
-            };
-            renderCourseTable();
-        }
+            }
+            // 學歷查詢
+            var searchEduForm = document.getElementById('searchEduForm');
+            if (searchEduForm) {
+                searchEduForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    var formData = new FormData(searchEduForm);
+                    fetch('edu_search.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(r => r.text())
+                    .then(txt => {
+                        document.getElementById('searchEduResult').innerHTML = txt;
+                    });
+                };
+            }
+            // 經歷查詢
+            var searchExpForm = document.getElementById('searchExpForm');
+            if (searchExpForm) {
+                searchExpForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    var formData = new FormData(searchExpForm);
+                    fetch('exp_search.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(r => r.text())
+                    .then(txt => {
+                        document.getElementById('searchExpResult').innerHTML = txt;
+                    });
+                };
+            }
+            // 獎項查詢
+            var searchAwardForm = document.getElementById('searchAwardForm');
+            if (searchAwardForm) {
+                searchAwardForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    var formData = new FormData(searchAwardForm);
+                    fetch('award_search.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(r => r.text())
+                    .then(txt => {
+                        document.getElementById('searchAwardResult').innerHTML = txt;
+                    });
+                };
+            }
+            // 計畫查詢
+            var searchProjectForm = document.getElementById('searchProjectForm');
+            if (searchProjectForm) {
+                searchProjectForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    var formData = new FormData(searchProjectForm);
+                    fetch('project_search.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(r => r.text())
+                    .then(txt => {
+                        document.getElementById('searchProjectResult').innerHTML = txt;
+                    });
+                };
+            }
+            // 演講查詢
+            var searchSpeechForm = document.getElementById('searchSpeechForm');
+            if (searchSpeechForm) {
+                searchSpeechForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    var formData = new FormData(searchSpeechForm);
+                    fetch('speech_search.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(r => r.text())
+                    .then(txt => {
+                        document.getElementById('searchSpeechResult').innerHTML = txt;
+                    });
+                };
+            }
+            // 教材查詢
+            var searchTeachMatForm = document.getElementById('searchTeachMatForm');
+            if (searchTeachMatForm) {
+                searchTeachMatForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    var formData = new FormData(searchTeachMatForm);
+                    fetch('teachmat_search.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(r => r.text())
+                    .then(txt => {
+                        document.getElementById('searchTeachMatResult').innerHTML = txt;
+                    });
+                };
+            }
+            // 專利查詢
+            var searchPatentForm = document.getElementById('searchPatentForm');
+            if (searchPatentForm) {
+                searchPatentForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    var formData = new FormData(searchPatentForm);
+                    fetch('patent_search.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(r => r.text())
+                    .then(txt => {
+                        document.getElementById('searchPatentResult').innerHTML = txt;
+                    });
+                };
+            }
+            // 論文查詢
+            var searchPaperForm = document.getElementById('searchPaperForm');
+            if (searchPaperForm) {
+                searchPaperForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    var formData = new FormData(searchPaperForm);
+                    fetch('paper_search.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(r => r.text())
+                    .then(txt => {
+                        document.getElementById('searchPaperResult').innerHTML = txt;
+                    });
+                };
+            }
+        });
     </script>
 </head>
 <body>
@@ -615,6 +693,9 @@ include('db.php');
                     </label>
                     <label>電話分機：
                         <input type="text" name="Prof_ExtensionNumber" required>
+                    </label>
+                    <label>研究領域：
+                        <input type="text" name="Prof_ResearchFields" required>
                     </label>
                     <label>大頭照：
                         <input type="file" name="Prof_Image" accept="image/*">
@@ -1286,7 +1367,6 @@ include('db.php');
             };
             renderCourseTable();
         }
-        </script>
-    </div>
+    </script>
 </body>
 </html>
